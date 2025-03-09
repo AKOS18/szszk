@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Színárnyalat választó - szöveges kalandjáték</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: linear-gradient(to right, #2c3e50, #3498db);
+            text-align: center;
+            padding: 20px;
+            color: #fff;
+        }
+        .color-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 20px auto;
+            border: 2px solid #fff;
+        }
+        .hidden {
+            display: none;
+        }
+        #enemy {
+            font-size: 24px;
+            color: red;
+            margin-top: 20px;
+        }
+        #storyBox {
+            border: 2px solid #fff;
+            padding: 10px;
+            margin: 20px auto;
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .option-button {
+            margin: 5px;
+            padding: 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 100px;
+            height: 40px;
+            transition: background-color 0.3s;
+        }
+        .option-button:hover {
+            opacity: 0.8;
+        }
+        #restartButton {
+            width: 100px;
+            height: 50px;
+            color: white;
+            border: 2px solid #04cfd6;
+            background-color: rgba(43, 2, 250, 0.841);
+        }
+    </style>
+</head>
+<body>
+    <h1>Színárnyalat választó - szöveges kalandjáték</h1>
+    <div class="color-circle" id="colorCircle"></div>
+    <h2 id="question"></h2>
+    <div id="options"></div>
+    <button id="nextButton" class="hidden">Következő szint.</button>
+    <button id="restartButton" class="hidden" onclick="location.reload();">Új játék</button>
+    <div id="storyBox">
+        <h3 id="story"></h3>
+    </div>
+    <div id="enemy" class="hidden">Elvesztél!</div>
+
+    <script>
+        const levels = [
+            { color: '#FF5733', options: ['Narancssárga', 'Piros', 'Zöld', 'Kék'], answer: 0, shades: ['#FF7F50', '#FF4500', '#FF6347', '#FF0000'] },
+            { color: '#33FF57', options: ['Sárga', 'Zöld', 'Lila', 'Barna'], answer: 1, shades: ['#32CD32', '#00FF00', '#7FFF00', '#ADFF2F'] },
+            { color: '#3357FF', options: ['Kék', 'Narancssárga', 'Rózsaszín', 'Fekete'], answer: 0, shades: ['#1E90FF', '#00BFFF', '#4682B4', '#0000FF'] },
+            { color: '#FF33A1', options: ['Zöld', 'Rózsaszín', 'Sárga', 'Kék'], answer: 1, shades: ['#FF1493', '#FF69B4', '#FFB6C1', '#FFC0CB'] },
+            { color: '#FFFF33', options: ['Zöld', 'Sárga', 'Kék', 'Narancssárga'], answer: 1, shades: ['#FFD700', '#FFFF00', '#FFFACD', '#FFEFD5'] },
+            { color: '#33FFFF', options: ['Kék', 'Zöld', 'Narancssárga', 'Rózsaszín'], answer: 0, shades: ['#00CED1', '#20B2AA', '#40E0D0', '#48D1CC'] },
+            { color: '#FF33FF', options: ['L ila', 'Rózsaszín', 'Zöld', 'Kék'], answer: 1, shades: ['#DA70D6', '#DDA0DD', '#FF00FF', '#BA55D3'] },
+            { color: '#FFFFFF', options: ['Fehér', 'Szürke', 'Fekete', 'Kék'], answer: 0, shades: ['#F0F8FF', '#FAEBD7', '#FFE4C4', '#FFDEAD'] },
+            { color: '#000000', options: ['Fekete', 'Szürke', 'Fehér', 'Kék'], answer: 0, shades: ['#696969', '#808080', '#A9A9A9', '#C0C0C0'] },
+            { color: '#FFC300', options: ['Arany', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FFD700', '#FFA500', '#FF8C00', '#FF4500'] },
+            { color: '#DAF7A6', options: ['Zöld', 'Kék', 'Narancssárga', 'Rózsaszín'], answer: 0, shades: ['#98FB98', '#90EE90', '#00FF7F', '#32CD32'] },
+            { color: '#C70039', options: ['Piros', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FF0000', '#FF6347', '#FF4500', '#DC143C'] },
+            { color: '#900C3F', options: ['Sötétvörös', 'Lila', 'Kék', 'Zöld'], answer: 0, shades: ['#8B0000', '#A52A2A', '#B22222', '#C71585'] },
+            { color: '#581845', options: ['Lila', 'Kék', 'Narancssárga', 'Zöld'], answer: 1, shades: ['#4B0082', '#800080', '#6A5ACD', '#483D8B'] },
+            { color: '#FFC0CB', options: ['Rózsaszín', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093'] },
+            { color: '#FF4500', options: ['Narancssárga', 'Zöld', 'Kék', 'Rózsaszín'], answer: 0, shades: ['#FF6347', '#FF7F50', '#FF8C00', '#FF0000'] },
+        ];
+
+        let currentLevel = 0;
+
+        function startGame() {
+            currentLevel = 0;
+            showLevel();
+        }
+
+        function showLevel() {
+            const level = levels[currentLevel];
+            document.getElementById('colorCircle').style.backgroundColor = level.color;
+            document.getElementById('question').innerText = 'Válaszd ki a helyes árnyalatot!';
+            document.getElementById('options').innerHTML = '';
+            level.shades.forEach((shade, index) => {
+                const button = document.createElement('button');
+                button.style.backgroundColor = shade;
+                button.className = 'option-button';
+                button.onclick = () => checkAnswer(level.answer === index, button);
+                document.getElementById('options').appendChild(button);
+            });
+            document.getElementById('story').innerText = getStory(currentLevel);
+            document.getElementById('enemy').classList.add('hidden');
+            document.getElementById('nextButton').classList.add('hidden');
+            document.getElementById('restartButton').classList.add('hidden');
+            document.getElementById('storyBox').classList.remove('hidden');
+        }
+
+        function checkAnswer(isCorrect, button) {
+            if (isCorrect) {
+                alert('Tovább jutottál');
+                currentLevel++;
+                if (currentLevel < levels.length) {
+                    showLevel();
+                } else {
+                    alert('Gratulálok,teljesítetted a küldetésed!');
+                    document.getElementById('storyBox').classList.add('hidden');
+                    document.getElementById('nextButton').classList.add('hidden');
+                    document.getElementById('restartButton').classList.remove('hidden');
+                }
+            } else {
+                document.getElementById('enemy').classList.remove('hidden');
+                alert(getEnding(currentLevel));
+                document.querySelectorAll('.option-button').forEach(btn => btn.disabled = true);
+                button.disabled = false;
+                document.getElementById('nextButton').classList.add('hidden');
+                document.getElementById('restartButton').classList.remove('hidden');
+                document.getElementById('storyBox').classList.add('hidden');
+            }
+        }
+
+        function getStory(level) {
+            const stories = [
+                "Belépsz az első portálon, és egy vörösen izzó világban találod magad. A föld alattad lávától forró, a levegő szikrázik az energiától. Egy óriási Tűzmadár szárnyal feletted.",
+                "Egy buja, smaragdzöld erdőben találod magad. A fák levelei világítanak, és a szél susogásában egy rejtélyes üzenetet hallasz: 'Csak az erdő valódi színét ismerő utazó juthat tovább'.",
+                "Egy óceán közepén lebegsz, a víz türkiz és mélykék árnyalatokban hullámzik körülötted. Egy rejtélyes vízi szellem kérdez tőled: 'Melyik árnyalat az óceán lelke?'",
+                "Egy felhők között lebegő városban találod magad, ahol minden rózsaszín és lila fényben ragyog. Egy titokzatos hercegnő lép elő, és azt mondja: 'Csak a valódi rózsaszín lélek láthatja az utat.'",
+                "Egy vakítóan aranyszínű város kapujában állsz. A kapuőr, egy óriási szfinx, megállít és azt mondja: 'Az arany fényének igazi színe mutatja meg az utad.'",
+                "Egy jégvilágban találod magad, ahol minden kristályokból és hópelyhekből áll. Egy jégsárkány figyel téged, és így szól: 'Csak az igazán tiszta kék lélek kelhet át a jégmezőn.'",
+                "Egy ősi torony lépcsőin mászol felfelé, ahol minden fal lilás fényben ragyog. Egy varázskönyv lebeg előtted, és egy kérdést tesz fel: 'Melyik az igazi lila árnyalat?'",
+                "Egy végtelen fehér térben lebegsz. Nincs semmi, csak a tiszta fény. Egy hang a fejedben megszólal: 'A tiszta fényt csak az ismerheti fel, aki látja a sötétséget.'",
+                "Egy sötét világba érkezel, ahol mindent árnyak borítanak. Egy árnylény közelít, és azt suttogja: 'Csak az igazi fekete árnyalatot látó utazó juthat ki innen.' ",
+                "A naplemente ragyogó színeiben úszó dombvidéken jársz. Egy bölcs vándor azt mondja: 'A naplemente igazi színét kell megtalálnod, különben örökre itt ragadsz.'",
+                "Egy hegycsúcson állsz, ahol minden smaragdzöld fényben tündököl. A királyi pecsétőr kérdi: 'Mi a smaragd valódi színe?'",
+                "Egy sötét éjszakán jársz, ahol a Hold vörösen izzik. Egy ősi farkasüvöltés hallatszik: 'Csak az ismeri a Hold titkát, aki a helyes árnyalatot választja.'",
+                "Egy csavart, dimenziókon átívelő térben vagy. Az idő és a tér szétesik körülötted. Egy rejtélyes hang: 'A káosz egyetlen stabil pontját kell megtalálnod.'",
+                "Egy óra ketyeg körülötted. Az Időőrző kérdi: 'Melyik a múlt valódi színe?'",
+                "A végére értél a kalandodnak mostmár nyugovóra térhetsz vagy elveszíthetsz mindent.",
+            ];
+            return stories[level] || "";
+        }
+
+        function getEnding(level) {
+            const endings = [
+                "Elbuktál, elveszett minden amiért küzdöttél az életedben."
+            ];
+            return endings[Math.floor(Math.random() * endings.length)];
+        }
+
+        document.getElementById('nextButton').onclick = startGame;
+        document .getElementById('restartButton').onclick = startGame;
+        startGame();
+    </script>
+</body>
+</html>
