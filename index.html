@@ -54,6 +54,12 @@
             border: 2px solid #04cfd6;
             background-color: rgba(43, 2, 250, 0.841);
         }
+        #congratulations {
+            font-size: 36px;
+            color: #04cfd6;
+            margin-top: 20px;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -67,31 +73,36 @@
         <h3 id="story"></h3>
     </div>
     <div id="enemy" class="hidden">Elvesztél!</div>
+    <div id="congratulations">Gratulálok!</div>
 
     <script>
-        const levels = [
-            { color: '#FF5733', options: ['Narancssárga', 'Piros', 'Zöld', 'Kék'], answer: 0, shades: ['#FF7F50', '#FF4500', '#FF6347', '#FF0000'] },
-            { color: '#33FF57', options: ['Sárga', 'Zöld', 'Lila', 'Barna'], answer: 1, shades: ['#32CD32', '#00FF00', '#7FFF00', '#ADFF2F'] },
-            { color: '#3357FF', options: ['Kék', 'Narancssárga', 'Rózsaszín', 'Fekete'], answer: 0, shades: ['#1E90FF', '#00BFFF', '#4682B4', '#0000FF'] },
-            { color: '#FF33A1', options: ['Zöld', 'Rózsaszín', 'Sárga', 'Kék'], answer: 1, shades: ['#FF1493', '#FF69B4', '#FFB6C1', '#FFC0CB'] },
-            { color: '#FFFF33', options: ['Zöld', 'Sárga', 'Kék', 'Narancssárga'], answer: 1, shades: ['#FFD700', '#FFFF00', '#FFFACD', '#FFEFD5'] },
-            { color: '#33FFFF', options: ['Kék', 'Zöld', 'Narancssárga', 'Rózsaszín'], answer: 0, shades: ['#00CED1', '#20B2AA', '#40E0D0', '#48D1CC'] },
-            { color: '#FF33FF', options: ['L ila', 'Rózsaszín', 'Zöld', 'Kék'], answer: 1, shades: ['#DA70D6', '#DDA0DD', '#FF00FF', '#BA55D3'] },
-            { color: '#FFFFFF', options: ['Fehér', 'Szürke', 'Fekete', 'Kék'], answer: 0, shades: ['#F0F8FF', '#FAEBD7', '#FFE4C4', '#FFDEAD'] },
-            { color: '#000000', options: ['Fekete', 'Szürke', 'Fehér', 'Kék'], answer: 0, shades: ['#696969', '#808080', '#A9A9A9', '#C0C0C0'] },
-            { color: '#FFC300', options: ['Arany', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FFD700', '#FFA500', '#FF8C00', '#FF4500'] },
-            { color: '#DAF7A6', options: ['Zöld', 'Kék', 'Narancssárga', 'Rózsaszín'], answer: 0, shades: ['#98FB98', '#90EE90', '#00FF7F', '#32CD32'] },
-            { color: '#C70039', options: ['Piros', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FF0000', '#FF6347', '#FF4500', '#DC143C'] },
-            { color: '#900C3F', options: ['Sötétvörös', 'Lila', 'Kék', 'Zöld'], answer: 0, shades: ['#8B0000', '#A52A2A', '#B22222', '#C71585'] },
-            { color: '#581845', options: ['Lila', 'Kék', 'Narancssárga', 'Zöld'], answer: 1, shades: ['#4B0082', '#800080', '#6A5ACD', '#483D8B'] },
-            { color: '#FFC0CB', options: ['Rózsaszín', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FFB6C1', '#FF69B4', '#FF1493', '#DB7093'] },
-            { color: '#FF4500', options: ['Narancssárga', 'Zöld', 'Kék', 'Rózsaszín'], answer: 0, shades: ['#FF6347', '#FF7F50', '#FF8C00', '#FF0000'] },
+         const levels = [
+            { color: '#FF5733', options: ['Narancssárga', 'Piros', 'Zöld', 'Kék'], answer: 3, shades: ['#FF7F50', '#FF4500', '#FF6347', '#FF5733'] },
+            { color: '#33FF57', options: ['Sárga', 'Zöld', 'Lila', 'Barna'], answer: 0, shades: ['#33FF57', '#00FF00', '#7FFF00', '#ADFF2F'] },
+            { color: '#3357FF', options: ['Kék', 'Narancssárga', 'Rózsaszín', 'Fekete'], answer: 2, shades: ['#1E90FF', '#00BFFF', '#3357FF', '#0000FF'] },
+            { color: '#FF33A1', options: ['Zöld', 'Rózsaszín', 'Sárga', 'Kék'], answer: 1, shades: ['#FF1493', '#FF33A1', '#FFB6C1', '#FFC0CB'] },
+            { color: '#FFFF33', options: ['Zöld', 'Sárga', 'Kék', 'Narancssárga'], answer: 0, shades: ['#FFFF33', '#FFFF00', '#FFFACD', '#FFEFD5'] },
+            { color: '#33FFFF', options: ['Kék', 'Zöld', 'Narancssárga', 'Rózsaszín'], answer: 2, shades: ['#00CED1', '#20B2AA', '#33FFFF', '#48D1CC'] },
+            { color: '#FF33FF', options: ['L ila', 'Rózsaszín', 'Zöld', 'Kék'], answer: 3, shades: ['#DA70D6', '#DDA0DD', '#FF00FF', '#FF33FF'] },
+            { color: '#FFFFFF', options: ['Fehér', 'Szürke', 'Fekete', 'Kék'], answer: 2, shades: ['#FFFF33', '#FAEBD7', '#FFFFFF', '#FFDEAD'] },
+            { color: '#000000', options: ['Fekete', 'Szürke', 'Fehér', 'Kék'], answer: 2, shades: ['#696969', '#808080', '#000000', '#C0C0C0'] },
+            { color: '#FFC300', options: ['Arany', 'Narancssárga', 'Zöld', 'Kék'], answer: 0, shades: ['#FFC300', '#FFA500', '#FF8C00', '#FF4500'] },
+            { color: '#DAF7A6', options: ['Zöld', 'Kék', 'Narancssárga', 'Rózsaszín'], answer: 1, shades: ['#98FB00', '#DAF7A6', '#00FF7F', '#32CD32'] },
+            { color: '#C70039', options: ['Piros', 'Narancssárga', 'Zöld', 'Kék'], answer: 3, shades: ['#FF0000', '#FF6347', '#FF4500', '#C70039'] },
+            { color: '#900C3F', options: ['Sötétvörös', 'Lila', 'Kék', 'Zöld'], answer: 0, shades: ['#900C3F', '#A52A2A', '#B22222', '#C71585'] },
+            { color: '#581845', options: ['Lila', 'Kék', 'Narancssárga', 'Zöld'], answer: 1, shades: ['#4B0082', '#581845', '#6A5ACD', '#483D8B'] },
+            { color: '#FFC0CB', options: ['Rózsaszín', 'Narancssárga', 'Zöld', 'Kék'], answer: 2, shades: ['#FFB6C1', '#FF69B4', '#FFC0CB', '#DB7093'] },
+            { color: '#FF4500', options: ['Narancssárga', 'Zöld', 'Kék', 'Rózsaszín'], answer: 3, shades: ['#FF6347', '#FF7F50', '#FF8C00', '#FF4500'] },
         ];
 
         let currentLevel = 0;
+        let correctAnswers = 0;
 
         function startGame() {
             currentLevel = 0;
+            correctAnswers = 0;
+            document.getElementById('congratulations').style.display = 'none'; 
+            document.getElementById('options').innerHTML = '';
             showLevel();
         }
 
@@ -116,15 +127,16 @@
 
         function checkAnswer(isCorrect, button) {
             if (isCorrect) {
-                alert('Tovább jutottál');
+                correctAnswers++;
                 currentLevel++;
-                if (currentLevel < levels.length) {
+                if (currentLevel < levels.length - 1) {
                     showLevel();
                 } else {
-                    alert('Gratulálok,teljesítetted a küldetésed!');
-                    document.getElementById('storyBox').classList.add('hidden');
-                    document.getElementById('nextButton').classList.add('hidden');
+                    document.getElementById('options').innerHTML = '';
+                    document.getElementById('congratulations').style.display = 'block';
                     document.getElementById('restartButton').classList.remove('hidden');
+                    alert('Gratulálok, teljesítetted a küldetésed!');
+                    document.getElementById('storyBox').classList.add('hidden');
                 }
             } else {
                 document.getElementById('enemy').classList.remove('hidden');
@@ -166,7 +178,7 @@
         }
 
         document.getElementById('nextButton').onclick = startGame;
-        document .getElementById('restartButton').onclick = startGame;
+        document.getElementById('restartButton').onclick = startGame;
         startGame();
     </script>
 </body>
